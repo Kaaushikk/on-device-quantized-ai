@@ -1,0 +1,17 @@
+{
+  "subset": "development",
+  "n": 200,
+  "accuracy_difference_int8_minus_fp32": 0.0,
+  "paired_bootstrap_95_interval": [
+    -0.02,
+    0.02
+  ],
+  "gate": 0.01,
+  "point_estimate_gate_passed": true,
+  "changed_row_ids": [
+    13,
+    399,
+    184,
+    509
+  ]
+}

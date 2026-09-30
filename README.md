@@ -6,11 +6,15 @@ memory, and accuracy on a Windows laptop. A slowdown is a valid result.
 
 ## Current status
 
-The public repository and initial synthetic harness are available. Three
-statistics tests and a 200-iteration smoke check pass locally. No model has
-been downloaded and no model performance or quality has been measured yet.
+The pinned local model, FP32 export, and dynamic INT8 conversion work. Six-shape
+FP32 parity and seven unit tests pass locally. On the 200 development examples,
+both ONNX variants score 91.5% accuracy; this is preliminary quality evidence.
+Final quality and native device timing are in progress.
 
-With Python 3.12 available, run the foundation checks from this folder:
+Use [the reproduction guide](docs/REPRODUCE.md) for environment installation,
+real model commands, offline inference, and measurement limitations.
+
+After installing the locked dependencies with Python 3.12, run the checks:
 
 ```powershell
 $env:PYTHONPATH = 'src'

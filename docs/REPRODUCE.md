@@ -61,7 +61,10 @@ three repetitions. It times 200 iterations per length/scenario after 20 warmup
 calls. Inputs come only from the development split and rotate identically.
 Lengths 32/128/256 describe padded tensor sizes; the raw records include actual
 unpadded lengths, which may be much shorter, especially in the longest bucket.
-Padding work must not be described as a naturally long-text workload.
+There are no development examples beyond 54 tokens. The 256-token workload
+repeats development text, then truncates it, as an explicitly synthetic stress
+fixture. Raw records include source row IDs and repeat counts. These repeated
+texts have no quality labels and are never used for accuracy evaluation.
 
 Outputs include per-process manifests, raw records, summaries, and any errors.
 Do not compare different run directories as if power/background conditions

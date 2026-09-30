@@ -118,7 +118,15 @@ def worker(variant, repetition, destination):
                 pool = [(row, size) for row, size in zip(rows, token_lengths, strict=True) if previous < size <= length]
                 previous = length
                 if not pool:
-                    raise ValueError(f"No development inputs for length bucket ending at {length}")
+                    # SST-2 has no natural >128-token examples in this development
+                    # split. A separately labeled repeated-text stress fixture
+                    # exercises full-length computation, without a quality label.
+                    pool = []
+                    for row, size in zip(rows[:16], token_lengths[:16], strict=True):
+                        repeats = max(2, (length - 2 + max(1, size - 2) - 1) // max(1, size - 2))
+                        text = " ".join([row["text"]] * repeats)
+                        count = min(length, len(runner.tokenizer(text)["input_ids"]))
+                        pool.append(({**row, "text": text, "repeat_count": repeats}, count))
                 # Freeze a bounded representative pool; rotate it identically across variants.
                 pool = pool[:min(16, len(pool))]
                 batches = [[pool[(offset + j) % len(pool)] for j in range(batch)] for offset in range(len(pool))]
@@ -146,6 +154,7 @@ def worker(variant, repetition, destination):
                         records.append({"variant": variant, "repetition": repetition, "scope": scope,
                                         "batch_size": batch, "sequence_length": length, "iteration": iteration,
                                         "input_ids": [row["row_id"] for row, _ in batches[index]],
+                                        "repeat_counts": [row.get("repeat_count", 1) for row, _ in batches[index]],
                                         "unpadded_token_lengths": [size for _, size in batches[index]], "duration_ns": duration})
                     summaries.append({"variant": variant, "repetition": repetition, "scope": scope,
                                       "sequence_length": length, **summarize(durations, batch)})
@@ -163,6 +172,7 @@ def worker(variant, repetition, destination):
                 "sampled_peak_rss_bytes": peak[0], "rss_sampling_seconds": 0.01,
                 "model_weight_bytes": sum(p.stat().st_size for p in weight_paths),
                 "disk_cache_state": "setup artifacts already cached; not cold disk"}
+    manifest["long_workload"] = "Repeated development text, truncated at 256; synthetic stress fixture, no quality labels"
     write_json(path / "manifest.json", manifest)
     (path / "timings.jsonl").write_text("".join(json.dumps(row) + "\n" for row in records), encoding="utf-8")
     with (path / "summary.csv").open("w", newline="", encoding="utf-8") as stream:

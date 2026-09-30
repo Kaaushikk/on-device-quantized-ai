@@ -91,15 +91,36 @@ implementation or investigation and push it with the corresponding code.
 - Development ONNX FP32 accuracy is 0.915 on 200 examples. INT8 comparison and
   the remaining evaluations are still in progress; this is not a final result.
 
+## September 30, 2026 — quality gates and performance workload
+
+- Re-evaluated the PyTorch development baseline using the same longest-in-batch
+  padding policy as ONNX. All variants score 0.915 development accuracy. Four
+  predictions change between ONNX precisions; the paired accuracy interval is
+  [-2, +2] percentage points, so identical scores do not prove equivalence.
+- Kept conversion settings fixed and evaluated all 672 held-out validation rows.
+  PyTorch and ONNX FP32 accuracy are 0.909226; INT8 accuracy is 0.901786.
+  INT8 loses 0.744 percentage points. Seventeen predictions change. The paired
+  bootstrap 95% interval is approximately [-1.935, +0.446] percentage points.
+  The point-estimate one-point gate passes, but the interval does not establish
+  equivalence within that margin. No tuning was performed on final results.
+- Inspected performance source lengths before timing: development examples
+  top out at 54 tokens (146 at <=32 and 54 at 33–54). No natural long bucket
+  exists. Added an explicitly synthetic repeated-development-text stress case
+  for length 256, with repeat counts recorded; it is excluded from quality.
+- Started three repetitions per variant in isolated processes with rotated
+  variant order, 200 iterations per scenario, and 20 warmup calls. No other
+  model experiment is being run alongside these timing processes.
+- Added a four-minute walkthrough and expanded reproduction instructions.
+
 ## Next steps
 
-Complete source downloads, run the real baseline/export/parity/quantization,
-inspect development quality, then freeze decisions and collect final quality
-and repeated device measurements. Publish the evidence-backed report and demo.
+Finish repeated timing, validate record counts and matching inputs/artifacts,
+generate and inspect the report, verify the offline demo and clean-environment
+setup, and publish the final evidence.
 
 ## Results and debugging status
 
-No real model inference results exist yet. GitHub authentication is resolved.
-No export or quantization failures have occurred because those stages have
-not run. The locked environment and tested foundation are now in place (M1).
-Real pipeline correctness and device measurements remain unverified.
+M1–M4 are validated locally: locked foundation, PyTorch baseline, FP32 parity,
+and executable INT8 with development quality comparison. Final quality is
+recorded. Repeated timing and fresh-environment reproduction are in progress;
+the final report has not been generated yet.

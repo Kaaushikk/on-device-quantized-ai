@@ -1,0 +1,30 @@
+{
+  "subset": "final",
+  "n": 672,
+  "accuracy_difference_int8_minus_fp32": -0.00744047619047619,
+  "paired_bootstrap_95_interval": [
+    -0.019345238095238096,
+    0.004464285714285714
+  ],
+  "gate": 0.01,
+  "point_estimate_gate_passed": true,
+  "changed_row_ids": [
+    862,
+    871,
+    643,
+    20,
+    135,
+    395,
+    697,
+    813,
+    527,
+    172,
+    448,
+    249,
+    301,
+    683,
+    770,
+    145,
+    178
+  ]
+}

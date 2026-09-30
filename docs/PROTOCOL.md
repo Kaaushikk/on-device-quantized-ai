@@ -30,6 +30,12 @@ iterations per scenario, and three repetitions. Rotate variant order and
 use a fresh process for each variant. Record every planned scenario and
 any failure. Extend warmup or repetitions when measurements are unstable.
 
+Source inspection found no development examples longer than 54 tokens.
+Short and medium scenarios use natural inputs in their length buckets.
+The 256-token scenario repeats development text to fill the context and is
+explicitly a synthetic long-text stress workload; it is never used for quality.
+Raw records include repeat counts and source row IDs for reproduction.
+
 Measure load time, first inference, warm p50/p95, examples per second,
 weight bytes, idle process RSS, and sampled peak RSS separately. RSS includes
 Python/runtime overhead and sampling may miss short peaks. Cached disk load
