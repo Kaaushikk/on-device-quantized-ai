@@ -61,11 +61,12 @@ def generate():
         q = quality[variant]
         meta = manifests[variant]
         lines.append(f"| {variant} | {q['n']} | {q['accuracy']:.4f} | {q['macro_f1']:.4f} | {meta[0]['model_weight_bytes']/2**20:.2f} | {statistics.median(m['idle_rss_bytes'] for m in meta)/2**20:.2f} | {statistics.median(m['sampled_peak_rss_bytes'] for m in meta)/2**20:.2f} |")
-    lines.extend(["", "## Cached startup", "", "Medians across fresh-process repetitions. Hash validation is outside load timing; tokenizer and model loading are inside it.", "",
-                  "| Variant | Load ms | First 32-token inference ms |", "| --- | ---: | ---: |"])
+    startup_lines = ["## Cached startup", "", "Medians across fresh-process repetitions. Hash validation is outside load timing; tokenizer and model loading are inside it.", "",
+                     "| Variant | Load ms | First 32-token inference ms |", "| --- | ---: | ---: |"]
     for variant in VARIANTS:
         meta = manifests[variant]
-        lines.append(f"| {variant} | {statistics.median(m['load_ns'] for m in meta)/1e6:.2f} | {statistics.median(m['first_inference_ns'] for m in meta)/1e6:.2f} |")
+        startup_lines.append(f"| {variant} | {statistics.median(m['load_ns'] for m in meta)/1e6:.2f} | {statistics.median(m['first_inference_ns'] for m in meta)/1e6:.2f} |")
+    startup_lines.append("")
     difference = comparison["accuracy_difference_int8_minus_fp32"] * 100
     interval = [value * 100 for value in comparison["paired_bootstrap_95_interval"]]
     lines.extend(["", f"INT8 minus ONNX FP32 accuracy: {difference:.3f} percentage points; paired bootstrap 95% interval [{interval[0]:.3f}, {interval[1]:.3f}].",
@@ -97,6 +98,8 @@ def generate():
                         "These are paired outcomes, not evidence that quantization causes a particular semantic bias. Small logit margins indicate boundary sensitivity; scores are not calibrated probabilities."])
     (destination / "ERROR_ANALYSIS.md").write_text("\n".join(error_lines) + "\n", encoding="utf-8")
     lines.insert(lines.index("## Repeated device measurements") - 1, f"[Changed-prediction analysis](ERROR_ANALYSIS.md): {harmed} harmed and {helped} helped predictions.")
+    heading_index = lines.index("## Repeated device measurements")
+    lines[heading_index:heading_index] = startup_lines
     for row in table:
         lines.append(f"| {row['variant']} | {row['scope']} | {row['batch']} | {row['sequence']} | {row['median_p50_ms']:.3f} ({row['min_p50_ms']:.3f}–{row['max_p50_ms']:.3f}) | {row['median_p95_ms']:.3f} | {row['median_examples_per_second']:.2f} |")
     lines.extend(["", "## Quantization effects", ""])

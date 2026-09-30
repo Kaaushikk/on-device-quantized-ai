@@ -72,8 +72,6 @@ were identical. Close heavy applications and keep power settings consistent.
 Thermal state and energy are not measured. Process RSS includes Python and
 runtime overhead, and a 10 ms sampler can miss brief peaks.
 
-## Source and licensing notes
-
 ## Verify offline behavior and a fresh environment
 
 After device timing has finished:

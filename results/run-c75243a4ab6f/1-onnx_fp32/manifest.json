@@ -1,0 +1,94 @@
+{
+  "created_at": "2026-09-30T23:31:54.841742+00:00",
+  "variant": "onnx_fp32",
+  "repetition": 1,
+  "settings": {
+    "schema_version": 1,
+    "model_id": "distilbert/distilbert-base-uncased-finetuned-sst-2-english",
+    "dataset_id": "stanfordnlp/sst2",
+    "seed": 17,
+    "development_examples": 200,
+    "threads": 1,
+    "batch_sizes": [
+      1
+    ],
+    "sequence_lengths": [
+      32,
+      128,
+      256
+    ],
+    "warmup": 20,
+    "iterations": 200,
+    "repetitions": 3,
+    "opset": 17,
+    "parity_atol": 0.0001,
+    "parity_rtol": 0.001,
+    "accuracy_loss_gate": 0.01
+  },
+  "hardware": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 170 Stepping 4, GenuineIntel",
+    "physical_cores": 16,
+    "logical_cores": 22,
+    "ram_bytes": 33736040448,
+    "cpu_name": "Intel(R) Core(TM) Ultra 9 185H",
+    "power_scheme": "Power Scheme GUID: 381b4222-f694-41f0-9685-ff5bb260df2e  (Balanced)",
+    "battery": "sbattery(percent=80, secsleft=<BatteryTime.POWER_TIME_UNLIMITED: -2>, power_plugged=True)",
+    "thermal_state": "not measured",
+    "energy": "not measured"
+  },
+  "versions": {
+    "torch": "2.8.0",
+    "transformers": "4.56.2",
+    "onnx": "1.19.0",
+    "onnxruntime": "1.22.1",
+    "datasets": "4.1.1",
+    "numpy": "2.5.3",
+    "psutil": "7.1.0"
+  },
+  "runner": {
+    "variant": "onnx_fp32",
+    "threads": 1,
+    "provider": "CPUExecutionProvider",
+    "artifact": {
+      "schema_version": 1,
+      "precision": "FP32",
+      "model_id": "distilbert/distilbert-base-uncased-finetuned-sst-2-english",
+      "model_revision": "714eb0fa89d2f80546fda750413ed43d93601a13",
+      "dataset_revision": "8d51e7e4887a4caaa95b3fbebbf53c0490b58bbb",
+      "versions": {
+        "torch": "2.8.0",
+        "transformers": "4.56.2",
+        "onnx": "1.19.0",
+        "onnxruntime": "1.22.1",
+        "datasets": "4.1.1",
+        "numpy": "2.5.3",
+        "psutil": "7.1.0"
+      },
+      "files": {
+        "model/config.json": "582122c8f414793d131e10022ce9ba04e3811a9da6389137ee2f18665b4f4d15",
+        "model/model.safetensors": "7c3919835e442510166d267fe7cbe847e0c51cd26d9ba07b89a57b952b49b8aa",
+        "model/README.md": "75f17282923fea5b541df92640e2d8646c4ff5e8e3e16ed0a7e4e50ee7588851",
+        "model/tokenizer_config.json": "5ab9097b4149371c5fd52b2d6e26cb6f9c07c0d19fcfdda895b1adad6b57c3e0",
+        "model/vocab.txt": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3",
+        "model.fp32.onnx": "5474ba29e68591f6d04f1c68c501873497d171bc584cc88e4bd2d7ca7ad91752"
+      },
+      "labels": {
+        "0": "NEGATIVE",
+        "1": "POSITIVE"
+      },
+      "graph": "model.fp32.onnx",
+      "opset": 17,
+      "exporter": "torch.onnx legacy, eager attention"
+    }
+  },
+  "data_sha256": "3b2efea0f3b72a7836f6fa5cbe9537e2df5053c1677bf7cc3e33f10a5e9ff7cc",
+  "load_ns": 6674205500,
+  "first_inference_ns": 42746400,
+  "idle_rss_bytes": 769957888,
+  "sampled_peak_rss_bytes": 782057472,
+  "rss_sampling_seconds": 0.01,
+  "model_weight_bytes": 267943049,
+  "disk_cache_state": "setup artifacts already cached; not cold disk",
+  "long_workload": "Repeated development text, truncated at 256; synthetic stress fixture, no quality labels"
+}

@@ -26,12 +26,18 @@ def setup():
     dev_ids = ids[:settings["development_examples"]]
     final_ids = ids[settings["development_examples"]:]
     rows = [{"row_id": i, "text": dataset[i]["sentence"], "label": dataset[i]["label"]} for i in range(len(dataset))]
+    split_path = ROOT / "configs" / "split.json"
+    if split_path.exists():
+        existing = read_json(split_path)
+        if (existing["development_ids"] != dev_ids or existing["final_ids"] != final_ids
+                or existing["seed"] != settings["seed"] or existing["model_revision"] != pins["model_revision"]
+                or existing["dataset_revision"] != pins["dataset_revision"]):
+            raise ValueError("Setup would change the frozen split; no data file was overwritten")
     write_json(ARTIFACTS / "data.json", {"rows": rows, "development_ids": dev_ids, "final_ids": final_ids})
     split_manifest = {**pins, "seed": settings["seed"],
                "dataset_id": settings["dataset_id"], "split": "validation",
                "development_ids": dev_ids, "final_ids": final_ids,
                "local_data_sha256": sha256(ARTIFACTS / "data.json")}
-    split_path = ROOT / "configs" / "split.json"
     if split_path.exists() and read_json(split_path) != split_manifest:
         raise ValueError("Setup differs from frozen split; restore original configuration/data")
     write_json(split_path, split_manifest)

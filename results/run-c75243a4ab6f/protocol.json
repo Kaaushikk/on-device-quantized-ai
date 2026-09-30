@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "model_id": "distilbert/distilbert-base-uncased-finetuned-sst-2-english",
+  "dataset_id": "stanfordnlp/sst2",
+  "seed": 17,
+  "development_examples": 200,
+  "threads": 1,
+  "batch_sizes": [
+    1
+  ],
+  "sequence_lengths": [
+    32,
+    128,
+    256
+  ],
+  "warmup": 20,
+  "iterations": 200,
+  "repetitions": 3,
+  "opset": 17,
+  "parity_atol": 0.0001,
+  "parity_rtol": 0.001,
+  "accuracy_loss_gate": 0.01
+}

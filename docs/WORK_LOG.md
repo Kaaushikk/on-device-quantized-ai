@@ -137,6 +137,20 @@ implementation or investigation and push it with the corresponding code.
 - Checked the SST-2 dataset card: license is listed as unknown. Dataset text and
   downloaded model weights remain local. Source links are in the reproduction guide.
 
+## September 30, 2026 — final repetition and reproduction preparation
+
+- Completed two repetitions for all variants and all three for INT8. Each
+  completed process produced its manifest, six scenario summaries, and 1,200
+  raw timing records. The run directory is intentionally incomplete until the
+  final PyTorch and ONNX FP32 processes finish; no full report is claimed yet.
+- Prepared a clean committed-checkout verification script with a new locked
+  environment. It reuses immutable local artifact hardlinks and checks unit
+  tests, blocked-network inference, and FP32 parity. It does not repeat device
+  timing or fresh artifact downloads; those remain separately reproducible commands.
+- Added experiment-schema and setting validation, UTF-8 BOM tolerance for
+  PowerShell-written JSON, and a guard against changing frozen split IDs before
+  overwriting local data.
+
 ## Next steps
 
 Finish repeated timing, validate record counts and matching inputs/artifacts,
