@@ -75,8 +75,11 @@ runtime overhead, and a 10 ms sampler can miss brief peaks.
 ## Source and licensing notes
 
 The [model card](https://huggingface.co/distilbert/distilbert-base-uncased-finetuned-sst-2-english)
-declares Apache 2.0 and documents sentiment-specific biases. SST-2 derives from
-the Stanford Sentiment Treebank. This repository publishes row IDs and results,
+declares Apache 2.0 and documents sentiment-specific biases. The
+[SST-2 dataset card](https://huggingface.co/datasets/stanfordnlp/sst2)
+lists its license as unknown; its source is the
+[Stanford Sentiment Treebank](https://nlp.stanford.edu/sentiment/).
+This repository publishes row IDs and results,
 not dataset sentences or model weights; users download sources during setup.
 Review upstream terms before redistributing either source. Export strategy and
 quantization follow the [ONNX Runtime guide](https://onnxruntime.ai/docs/performance/model-optimizations/quantization.html).

@@ -32,7 +32,19 @@ def versions():
 
 
 def config():
-    return read_json(ROOT / "configs" / "experiment.json")
+    settings = read_json(ROOT / "configs" / "experiment.json")
+    if settings.get("schema_version") != 1:
+        raise ValueError("Unsupported experiment schema")
+    for key in ("threads", "iterations", "repetitions"):
+        if not isinstance(settings[key], int) or settings[key] < 1:
+            raise ValueError(f"{key} must be a positive integer")
+    if settings["warmup"] < 1 or any(batch < 1 or batch > 32 for batch in settings["batch_sizes"]):
+        raise ValueError("Invalid warmup or batch sizes")
+    if not settings["sequence_lengths"] or any(length < 2 or length > 512 for length in settings["sequence_lengths"]):
+        raise ValueError("Invalid sequence lengths")
+    if settings["sequence_lengths"] != sorted(set(settings["sequence_lengths"])):
+        raise ValueError("Sequence lengths must be unique and increasing")
+    return settings
 
 
 def verify_files(manifest):

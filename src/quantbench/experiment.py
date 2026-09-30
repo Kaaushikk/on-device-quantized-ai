@@ -83,7 +83,7 @@ def hardware():
     return {"platform": platform.platform(), "processor": platform.processor(),
             "physical_cores": psutil.cpu_count(logical=False), "logical_cores": psutil.cpu_count(),
             "ram_bytes": psutil.virtual_memory().total,
-            "cpu_name": windows_output(["powershell", "-NoProfile", "-Command", "(Get-CimInstance Win32_Processor).Name"]),
+            "cpu_name": windows_output(["powershell", "-NoProfile", "-Command", "Get-ItemPropertyValue -LiteralPath 'HKLM:\\HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0' -Name ProcessorNameString"]),
             "power_scheme": windows_output(["powercfg", "/getactivescheme"]),
             "battery": str(psutil.sensors_battery()),
             "thermal_state": "not measured", "energy": "not measured"}

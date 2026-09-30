@@ -112,6 +112,31 @@ implementation or investigation and push it with the corresponding code.
   model experiment is being run alongside these timing processes.
 - Added a four-minute walkthrough and expanded reproduction instructions.
 
+## September 30, 2026 — measurement audits and hardware metadata
+
+- First repetition completed for all three variants, with 1,200 timing records
+  per process. The second ONNX FP32 repetition is complete. Timing variation,
+  particularly p95, is visible; conclusions will retain that limitation.
+- Recorded Intel Core Ultra 9 185H, 16 physical/22 logical cores, roughly
+  31.4 GiB RAM, Windows 11, Balanced power mode, and connected AC power.
+- WMI CPU-name lookup yielded no name inside the sandbox. Replaced it with
+  a read-only registry lookup; later process manifests include the full name.
+  Earlier manifests retain the original blank field plus processor identifier.
+- Added a run auditor that checks positive durations, exact scenario/sample
+  counts, and identical row IDs, repeat counts, token lengths, settings, and
+  data hashes across all variants/repetitions.
+- Added three auditor tests; all ten local unit tests pass.
+- Report generation rejects mismatched quality/timing artifacts and includes
+  startup, latency, throughput, memory, file size, and quality figures. It
+  explicitly labels medians across repetitions rather than pooled percentiles.
+- Added changed-prediction analysis: final INT8 harms 11 FP32-correct predictions
+  and fixes 6 FP32 errors. Logit margins are recorded without publishing text.
+- Prepared an offline verifier using Python socket audit hooks, plus blank-input,
+  Unicode, truncation, dtype, and finite-output checks. It will run after timing
+  finishes so extra model work cannot compete with measurements.
+- Checked the SST-2 dataset card: license is listed as unknown. Dataset text and
+  downloaded model weights remain local. Source links are in the reproduction guide.
+
 ## Next steps
 
 Finish repeated timing, validate record counts and matching inputs/artifacts,

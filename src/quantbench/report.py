@@ -8,9 +8,11 @@ from quantbench.common import ARTIFACTS, ROOT, VARIANTS, read_json, write_json
 
 
 def generate():
+    from quantbench.audit import validate_run
     run = ROOT / "results" / read_json(ROOT / "results" / "latest.json")["run"]
     if read_json(run / "failures.json"):
         raise ValueError("Run has failed scenarios; inspect failures before reporting")
+    write_json(run / "audit.json", validate_run(run))
     groups = defaultdict(list)
     manifests = defaultdict(list)
     for path in sorted(run.glob("*/summary.csv")):
@@ -49,7 +51,7 @@ def generate():
         writer.writerows(table)
     lines = ["# Local CPU quantization study", "", f"Source run: `results/{run.name}`.", "",
              "Measured on this Windows laptop. Results apply to this model, runtime, and workload only.", "",
-             f"CPU: {manifests[VARIANTS[0]][0]['hardware']['cpu_name']}",
+             f"CPU: {next((m['hardware']['cpu_name'] for items in manifests.values() for m in items if m['hardware']['cpu_name']), manifests[VARIANTS[0]][0]['hardware']['processor'])}",
              f"OS: {manifests[VARIANTS[0]][0]['hardware']['platform']}",
              f"Power: {manifests[VARIANTS[0]][0]['hardware']['power_scheme']}", "",
              "## Final held-out validation quality", "",
@@ -59,6 +61,11 @@ def generate():
         q = quality[variant]
         meta = manifests[variant]
         lines.append(f"| {variant} | {q['n']} | {q['accuracy']:.4f} | {q['macro_f1']:.4f} | {meta[0]['model_weight_bytes']/2**20:.2f} | {statistics.median(m['idle_rss_bytes'] for m in meta)/2**20:.2f} | {statistics.median(m['sampled_peak_rss_bytes'] for m in meta)/2**20:.2f} |")
+    lines.extend(["", "## Cached startup", "", "Medians across fresh-process repetitions. Hash validation is outside load timing; tokenizer and model loading are inside it.", "",
+                  "| Variant | Load ms | First 32-token inference ms |", "| --- | ---: | ---: |"])
+    for variant in VARIANTS:
+        meta = manifests[variant]
+        lines.append(f"| {variant} | {statistics.median(m['load_ns'] for m in meta)/1e6:.2f} | {statistics.median(m['first_inference_ns'] for m in meta)/1e6:.2f} |")
     difference = comparison["accuracy_difference_int8_minus_fp32"] * 100
     interval = [value * 100 for value in comparison["paired_bootstrap_95_interval"]]
     lines.extend(["", f"INT8 minus ONNX FP32 accuracy: {difference:.3f} percentage points; paired bootstrap 95% interval [{interval[0]:.3f}, {interval[1]:.3f}].",
@@ -68,6 +75,28 @@ def generate():
                   "Values are medians of three per-process summaries, not pooled request percentiles.", "",
                   "| Variant | Scope | Batch | Padded length | p50 ms (min–max) | p95 ms | Examples/s |",
                   "| --- | --- | ---: | ---: | ---: | ---: | ---: |"])
+    baseline_quality = quality["onnx_fp32"]
+    int8_quality = quality["onnx_int8"]
+    error_lines = ["# Changed-prediction analysis", "", "Final subset only. No raw dataset text is published.", "",
+                   "| Row ID | True label | FP32 prediction | INT8 prediction | FP32 absolute logit margin | INT8 absolute logit margin |",
+                   "| ---: | ---: | ---: | ---: | ---: | ---: |"]
+    harmed = helped = unchanged_wrong = 0
+    for i, row_id in enumerate(baseline_quality["row_ids"]):
+        original = baseline_quality["predictions"][i]
+        integer = int8_quality["predictions"][i]
+        expected = baseline_quality["labels"][i]
+        if original != integer:
+            harmed += int(original == expected)
+            helped += int(integer == expected)
+            margin_fp = abs(baseline_quality["logits"][i][0] - baseline_quality["logits"][i][1])
+            margin_int = abs(int8_quality["logits"][i][0] - int8_quality["logits"][i][1])
+            error_lines.append(f"| {row_id} | {expected} | {original} | {integer} | {margin_fp:.4f} | {margin_int:.4f} |")
+        elif original != expected:
+            unchanged_wrong += 1
+    error_lines.extend(["", f"INT8 turns {harmed} FP32-correct predictions into errors and fixes {helped} FP32 errors; {unchanged_wrong} shared errors remain.",
+                        "These are paired outcomes, not evidence that quantization causes a particular semantic bias. Small logit margins indicate boundary sensitivity; scores are not calibrated probabilities."])
+    (destination / "ERROR_ANALYSIS.md").write_text("\n".join(error_lines) + "\n", encoding="utf-8")
+    lines.insert(lines.index("## Repeated device measurements") - 1, f"[Changed-prediction analysis](ERROR_ANALYSIS.md): {harmed} harmed and {helped} helped predictions.")
     for row in table:
         lines.append(f"| {row['variant']} | {row['scope']} | {row['batch']} | {row['sequence']} | {row['median_p50_ms']:.3f} ({row['min_p50_ms']:.3f}–{row['max_p50_ms']:.3f}) | {row['median_p95_ms']:.3f} | {row['median_examples_per_second']:.2f} |")
     lines.extend(["", "## Quantization effects", ""])
@@ -81,7 +110,7 @@ def generate():
                   "The 10 ms sampler measures whole-process RSS and can miss brief peaks. Short/medium performance inputs rotate a bounded development pool, padded to scenario lengths. The 256-token workload repeats development text and is a synthetic stress fixture, not naturally long SST-2 text. This is not a representative production traffic study. No mobile, accelerator, container, or remote API performance is claimed.", "",
                   "Final accuracy uses a frozen validation-derived subset, not public test labels. The model and sentiment dataset have task-specific biases. INT8 leaves unsupported operators and embeddings in floating point. Input text and downloaded weights are excluded from Git.", "",
                   f"Raw timings and hardware/artifact manifests: [run directory](../results/{run.name}/). Quality records: `results/quality-final-*.json`. FP32 parity: [parity evidence](../results/parity.json). Setup and commands: [reproduction guide](../docs/REPRODUCE.md).", "",
-                  "![Warm latency](latency.png)"])
+                  "![Warm latency](latency.png)", "", "![Size, memory, and quality](resources.png)"])
     (destination / "COMPARISON.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     figure, axis = plt.subplots(figsize=(8, 4.5))
     for variant in VARIANTS:
@@ -92,5 +121,19 @@ def generate():
     axis.grid(alpha=0.2)
     figure.tight_layout()
     figure.savefig(destination / "latency.png", dpi=160)
+    plt.close(figure)
+    figure, axes = plt.subplots(1, 3, figsize=(12, 4))
+    names = ["PyTorch FP32", "ONNX FP32", "ONNX INT8"]
+    axes[0].bar(names, [manifests[v][0]['model_weight_bytes']/2**20 for v in VARIANTS])
+    axes[0].set(title="Model weight files", ylabel="MiB")
+    axes[1].bar(names, [statistics.median(m['sampled_peak_rss_bytes'] for m in manifests[v])/2**20 for v in VARIANTS])
+    axes[1].set(title="Sampled peak process RSS", ylabel="MiB")
+    axes[2].bar(names, [quality[v]['accuracy']*100 for v in VARIANTS])
+    axes[2].set(title=f"Held-out accuracy (N={comparison['n']})", ylabel="Percent", ylim=(0, 100))
+    for axis in axes:
+        axis.tick_params(axis='x', labelrotation=30)
+        axis.grid(axis='y', alpha=0.2)
+    figure.tight_layout()
+    figure.savefig(destination / "resources.png", dpi=160)
     plt.close(figure)
     print(f"Report generated: {destination / 'COMPARISON.md'}")
