@@ -6,8 +6,20 @@ memory, and accuracy on a Windows laptop. A slowdown is a valid result.
 
 ## Current status
 
-Project setup is underway. No model has been downloaded and no performance
-or quality claims have been measured yet.
+The public repository and initial synthetic harness are available. Three
+statistics tests and a 200-iteration smoke check pass locally. No model has
+been downloaded and no model performance or quality has been measured yet.
+
+With Python 3.12 available, run the foundation checks from this folder:
+
+```powershell
+$env:PYTHONPATH = 'src'
+python -m unittest discover -s tests -v
+python scripts/smoke.py
+```
+
+The smoke script uses a synthetic fixture and writes ignored local outputs.
+It verifies plumbing; it is not a real model benchmark.
 
 ## Where things belong
 
