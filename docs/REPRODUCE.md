@@ -74,6 +74,30 @@ runtime overhead, and a 10 ms sampler can miss brief peaks.
 
 ## Source and licensing notes
 
+## Verify offline behavior and a fresh environment
+
+After device timing has finished:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\check_offline.py
+.\scripts\reproduce.ps1
+```
+
+The offline verifier rejects Python socket connection, DNS, and UDP send
+operations, then exercises all three variants with blank-input rejection,
+Unicode, long-input truncation, dtype, and output checks. This is an application
+network-use check, not an OS firewall test.
+
+The reproduction script clones the committed local repository into an ignored
+`.repro` folder, creates a fresh environment, installs the version lock, and
+reruns unit tests, offline inference, and FP32 parity. It reuses hash-verified
+downloaded artifacts through local hardlinks; it neither changes weights nor
+repeats the full timing study. Use the earlier setup instructions for fresh
+downloads and the benchmark command for a new device study. Evidence is saved
+to `results/reproduction.json`.
+
+## Source and licensing notes
+
 The [model card](https://huggingface.co/distilbert/distilbert-base-uncased-finetuned-sst-2-english)
 declares Apache 2.0 and documents sentiment-specific biases. The
 [SST-2 dataset card](https://huggingface.co/datasets/stanfordnlp/sst2)
