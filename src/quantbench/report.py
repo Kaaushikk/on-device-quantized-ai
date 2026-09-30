@@ -25,6 +25,14 @@ def generate():
     if len(groups) != expected_groups or any(len(rows) != protocol["repetitions"] for rows in groups.values()):
         raise ValueError("Incomplete benchmark scenarios or repetitions")
     quality = {variant: read_json(ROOT / "results" / f"quality-final-{variant}.json") for variant in VARIANTS}
+    for variant in VARIANTS:
+        if quality[variant]["row_ids"] != quality[VARIANTS[0]]["row_ids"]:
+            raise ValueError("Final quality row IDs differ")
+        for manifest in manifests[variant]:
+            if manifest["runner"]["artifact"] != quality[variant]["metadata"]["artifact"]:
+                raise ValueError("Timing and quality artifacts differ")
+            if manifest["data_sha256"] != quality[variant]["data_sha256"]:
+                raise ValueError("Timing and quality data differ")
     comparison = read_json(ROOT / "results" / "quality-final-comparison.json")
     table = []
     for (variant, scope, batch, length), rows in groups.items():

@@ -68,6 +68,29 @@ implementation or investigation and push it with the corresponding code.
 - Started the source downloads. Hugging Face uses ordinary HTTP because its
   optional Xet helper is absent; no extra helper is needed for correctness.
 
+## September 30, 2026 — export validation and preprocessing debug
+
+- Downloads completed: 872 SST-2 validation rows, with 200 frozen development
+  examples and 672 final examples. Exact source commits and data hash are saved.
+- Exported the classifier using eager attention and PyTorch's legacy ONNX
+  exporter at opset 17. ONNX graph checking passed. A tracer warning concerned
+  an attention-mask constant; tested parity rather than assuming it was harmless.
+- FP32 parity passed all six batch/sequence combinations at the original
+  atol=1e-4, rtol=1e-3. Largest observed absolute logit difference was about
+  3.58e-6, and all tested predicted labels matched.
+- First INT8 preprocessing attempt failed with `Incomplete symbolic shape
+  inference`. Inspected the installed runtime's API and enabled its supported
+  `auto_merge=True` option. Kept graph fusion disabled. Preprocessing and graph
+  checking then passed; the converted graph has 38 MatMulInteger operators.
+- Added exclusions for the runtime's diagnostic ONNX/external-data files so
+  accidental model weights cannot be published from the repository root.
+- Added two quality-metric tests; all seven local unit tests pass.
+- Quality evaluation now pads to the longest example within each batch (up to
+  512 tokens), avoiding needless fixed-length work. Performance still uses the
+  protocol's fixed padded lengths. All variants use the same quality policy.
+- Development ONNX FP32 accuracy is 0.915 on 200 examples. INT8 comparison and
+  the remaining evaluations are still in progress; this is not a final result.
+
 ## Next steps
 
 Complete source downloads, run the real baseline/export/parity/quantization,

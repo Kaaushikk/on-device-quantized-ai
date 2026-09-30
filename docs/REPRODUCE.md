@@ -38,6 +38,7 @@ mode and load local files with verified hashes. FP32 parity checks six shapes
 at the unchanged declared tolerances. INT8 conversion separately preprocesses
 shapes, skips preprocessing graph fusion, and quantizes constant-weight
 MatMul operators using dynamic unsigned activations and signed INT8 weights.
+Symbolic shape preprocessing enables `auto_merge=True`, needed for this graph.
 Embeddings and other operators may remain FP32; the manifest records counts.
 
 ## Final quality and device timing
@@ -46,9 +47,12 @@ Once development decisions are fixed, evaluate all three variants with
 `--subset final`, then run `compare --subset final`. This uses 672 held-out
 validation rows if the original 872-row source and 200-row development split
 are unchanged. No public test labels are used.
+Quality evaluation pads to the longest example in each batch of eight,
+with truncation at 512 tokens; this differs from fixed-shape performance timing.
 
 ```powershell
 .\scripts\run.ps1 benchmark
+.\scripts\run.ps1 report
 .\scripts\run.ps1 demo --variant onnx_int8 --text 'This movie was excellent.'
 ```
 

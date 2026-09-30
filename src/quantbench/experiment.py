@@ -43,12 +43,13 @@ def evaluate(variant, subset):
     runner.load()
     logits = []
     for start in range(0, len(rows), 8):
-        inputs = runner.prepare(runner.preprocess([row["text"] for row in rows[start:start + 8]], 512))
+        inputs = runner.prepare(runner.preprocess([row["text"] for row in rows[start:start + 8]], 512, pad_to_max=False))
         logits.extend(runner.predict(inputs).tolist())
     predictions = np.asarray(logits).argmax(1).tolist()
     result = {"variant": variant, "subset": subset, "row_ids": ids,
               "labels": [row["label"] for row in rows], "predictions": predictions,
-              "logits": logits, "metadata": runner.metadata(), "sequence_length": 512,
+              "logits": logits, "metadata": runner.metadata(), "max_sequence_length": 512,
+              "padding": "longest in batch", "batch_size": 8,
               "data_sha256": sha256(ARTIFACTS / "data.json")}
     result.update(quality_metrics(result["labels"], predictions))
     write_json(ROOT / "results" / f"quality-{subset}-{variant}.json", result)

@@ -27,10 +27,14 @@ def setup():
     final_ids = ids[settings["development_examples"]:]
     rows = [{"row_id": i, "text": dataset[i]["sentence"], "label": dataset[i]["label"]} for i in range(len(dataset))]
     write_json(ARTIFACTS / "data.json", {"rows": rows, "development_ids": dev_ids, "final_ids": final_ids})
-    write_json(ROOT / "configs" / "split.json", {**pins, "seed": settings["seed"],
+    split_manifest = {**pins, "seed": settings["seed"],
                "dataset_id": settings["dataset_id"], "split": "validation",
                "development_ids": dev_ids, "final_ids": final_ids,
-               "local_data_sha256": sha256(ARTIFACTS / "data.json")})
+               "local_data_sha256": sha256(ARTIFACTS / "data.json")}
+    split_path = ROOT / "configs" / "split.json"
+    if split_path.exists() and read_json(split_path) != split_manifest:
+        raise ValueError("Setup differs from frozen split; restore original configuration/data")
+    write_json(split_path, split_manifest)
     files = {str(path.relative_to(ARTIFACTS)).replace("\\", "/"): sha256(path)
              for path in (ARTIFACTS / "model").iterdir() if path.is_file()}
     write_json(ARTIFACTS / "pytorch_fp32.manifest.json", {
@@ -105,7 +109,7 @@ def quantize():
     destination = ARTIFACTS / "model.int8.onnx"
     # Keep graph rewriting separate, and skip fusion so both runtime paths
     # retain comparable optimizer behavior at session creation.
-    quant_pre_process(str(source), str(prepared), skip_optimization=True)
+    quant_pre_process(str(source), str(prepared), skip_optimization=True, auto_merge=True)
     quantize_dynamic(str(prepared), str(destination), weight_type=QuantType.QInt8,
                      op_types_to_quantize=["MatMul"], per_channel=False,
                      extra_options={"MatMulConstBOnly": True})
@@ -115,7 +119,8 @@ def quantize():
         raise ValueError("Conversion produced no quantized matrix multiplication")
     write_json(ARTIFACTS / "onnx_int8.manifest.json", {
         **manifest, "precision": "dynamic INT8 weights / UINT8 activations", "graph": destination.name,
-        "quantization": {"operators": ["MatMul"], "per_channel": False, "constant_weights_only": True},
+        "quantization": {"operators": ["MatMul"], "per_channel": False, "constant_weights_only": True,
+                         "symbolic_shape_auto_merge": True, "preprocess_graph_optimization": False},
         "operator_counts": counts, "preprocessed_sha256": sha256(prepared),
         "files": {**{key: value for key, value in manifest["files"].items() if key != manifest["graph"]},
                   destination.name: sha256(destination)}})

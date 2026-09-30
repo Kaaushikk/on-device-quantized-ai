@@ -11,6 +11,7 @@ jobs:
       - name: Test statistics
         run: |
           $env:PYTHONPATH = 'src'
-          python -m unittest discover -s tests -v
+          python -m unittest discover -s tests -p 'test_metrics.py' -v
+          python -m unittest discover -s tests -p 'test_provenance.py' -v
       - name: Check synthetic output pipeline
         run: python scripts/smoke.py

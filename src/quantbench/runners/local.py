@@ -35,12 +35,12 @@ class LocalRunner:
             if self.model.get_providers() != ["CPUExecutionProvider"]:
                 raise ValueError("Unexpected execution provider")
 
-    def preprocess(self, texts, length=256):
+    def preprocess(self, texts, length=256, pad_to_max=True):
         if not texts or any(not isinstance(text, str) or not text.strip() for text in texts):
             raise ValueError("Provide a nonempty batch of nonblank strings")
         if len(texts) > 32 or not 2 <= length <= 512:
             raise ValueError("Batch limit 32; sequence length must be between 2 and 512")
-        encoded = self.tokenizer(list(texts), truncation=True, padding="max_length",
+        encoded = self.tokenizer(list(texts), truncation=True, padding="max_length" if pad_to_max else True,
                                  max_length=length, return_tensors="np")
         return {key: np.asarray(encoded[key], dtype=np.int64) for key in ("input_ids", "attention_mask")}
 

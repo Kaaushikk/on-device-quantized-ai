@@ -1,0 +1,95 @@
+{
+  "passed": true,
+  "atol": 0.0001,
+  "rtol": 0.001,
+  "checks": [
+    {
+      "batch": 1,
+      "sequence": 32,
+      "max_absolute_error": 9.5367431640625e-07
+    },
+    {
+      "batch": 1,
+      "sequence": 128,
+      "max_absolute_error": 4.76837158203125e-07
+    },
+    {
+      "batch": 1,
+      "sequence": 256,
+      "max_absolute_error": 4.76837158203125e-07
+    },
+    {
+      "batch": 4,
+      "sequence": 32,
+      "max_absolute_error": 2.86102294921875e-06
+    },
+    {
+      "batch": 4,
+      "sequence": 128,
+      "max_absolute_error": 3.5762786865234375e-06
+    },
+    {
+      "batch": 4,
+      "sequence": 256,
+      "max_absolute_error": 2.86102294921875e-06
+    }
+  ],
+  "pytorch_manifest": {
+    "schema_version": 1,
+    "precision": "FP32",
+    "model_id": "distilbert/distilbert-base-uncased-finetuned-sst-2-english",
+    "model_revision": "714eb0fa89d2f80546fda750413ed43d93601a13",
+    "dataset_revision": "8d51e7e4887a4caaa95b3fbebbf53c0490b58bbb",
+    "versions": {
+      "torch": "2.8.0",
+      "transformers": "4.56.2",
+      "onnx": "1.19.0",
+      "onnxruntime": "1.22.1",
+      "datasets": "4.1.1",
+      "numpy": "2.5.3",
+      "psutil": "7.1.0"
+    },
+    "files": {
+      "model/config.json": "582122c8f414793d131e10022ce9ba04e3811a9da6389137ee2f18665b4f4d15",
+      "model/model.safetensors": "7c3919835e442510166d267fe7cbe847e0c51cd26d9ba07b89a57b952b49b8aa",
+      "model/README.md": "75f17282923fea5b541df92640e2d8646c4ff5e8e3e16ed0a7e4e50ee7588851",
+      "model/tokenizer_config.json": "5ab9097b4149371c5fd52b2d6e26cb6f9c07c0d19fcfdda895b1adad6b57c3e0",
+      "model/vocab.txt": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3"
+    },
+    "labels": {
+      "0": "NEGATIVE",
+      "1": "POSITIVE"
+    }
+  },
+  "onnx_manifest": {
+    "schema_version": 1,
+    "precision": "FP32",
+    "model_id": "distilbert/distilbert-base-uncased-finetuned-sst-2-english",
+    "model_revision": "714eb0fa89d2f80546fda750413ed43d93601a13",
+    "dataset_revision": "8d51e7e4887a4caaa95b3fbebbf53c0490b58bbb",
+    "versions": {
+      "torch": "2.8.0",
+      "transformers": "4.56.2",
+      "onnx": "1.19.0",
+      "onnxruntime": "1.22.1",
+      "datasets": "4.1.1",
+      "numpy": "2.5.3",
+      "psutil": "7.1.0"
+    },
+    "files": {
+      "model/config.json": "582122c8f414793d131e10022ce9ba04e3811a9da6389137ee2f18665b4f4d15",
+      "model/model.safetensors": "7c3919835e442510166d267fe7cbe847e0c51cd26d9ba07b89a57b952b49b8aa",
+      "model/README.md": "75f17282923fea5b541df92640e2d8646c4ff5e8e3e16ed0a7e4e50ee7588851",
+      "model/tokenizer_config.json": "5ab9097b4149371c5fd52b2d6e26cb6f9c07c0d19fcfdda895b1adad6b57c3e0",
+      "model/vocab.txt": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3",
+      "model.fp32.onnx": "5474ba29e68591f6d04f1c68c501873497d171bc584cc88e4bd2d7ca7ad91752"
+    },
+    "labels": {
+      "0": "NEGATIVE",
+      "1": "POSITIVE"
+    },
+    "graph": "model.fp32.onnx",
+    "opset": 17,
+    "exporter": "torch.onnx legacy, eager attention"
+  }
+}

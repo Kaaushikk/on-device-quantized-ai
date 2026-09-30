@@ -9,3 +9,5 @@ __pycache__/
 artifacts/*
 !artifacts/.gitkeep
 results/local/
+sym_shape_infer_temp.onnx
+*.data
