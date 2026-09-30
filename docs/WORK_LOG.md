@@ -41,15 +41,42 @@ implementation or investigation and push it with the corresponding code.
 - Added Windows CI to run the same checks after pushes. Remote CI status must
   be checked separately; local success does not establish remote success.
 
+## September 30, 2026 — real pipeline implementation
+
+- Created a project-local `.venv` on Python 3.12.14. Installed pinned PyTorch
+  2.8.0, Transformers 4.56.2, ONNX 1.19.0, ONNX Runtime 1.22.1, Datasets
+  4.1.1, and supporting libraries. `pip check` found no broken requirements.
+- Froze all resolved package versions in `requirements.lock.txt`; documented
+  that this is a version freeze for Windows/Python 3.12, not a package-hash lock.
+- Added versioned experiment settings and commands for setup, export, parity,
+  quantization, evaluation, paired quality comparison, benchmark, demo, and report.
+- Setup resolves and saves immutable source commits before downloading, freezes
+  200 development row IDs and the remaining validation rows for final quality,
+  and hashes local artifacts/data. Downloaded text/weights remain excluded.
+- Real runners verify hashes, load offline, validate label/provider choices,
+  reject blank input, limit batch size, and truncate at documented sequence lengths.
+- Implemented graph export, six-shape FP32 parity, separate shape preprocessing,
+  and dynamic constant-weight MatMul quantization. These require real-run validation
+  before their results can be called successful.
+- Implemented isolated-process timing with rotated variant order, input ID tracking,
+  10 ms RSS sampling, startup timing, and hardware/power metadata.
+- Added final-quality comparison with paired bootstrap uncertainty and report
+  generation from raw results. No final-quality or performance result exists yet.
+- Five unit tests pass, including rejection of modified artifact hashes and paths
+  outside the artifact folder. Python source compilation also passes.
+- Verified the previous Windows CI run completed successfully.
+- Started the source downloads. Hugging Face uses ordinary HTTP because its
+  optional Xet helper is absent; no extra helper is needed for correctness.
+
 ## Next steps
 
-Create a tested synthetic harness and project-local environment, pin compatible
-dependencies, download allowed model/data snapshots, implement real runners,
-and validate conversion before collecting any device measurements.
+Complete source downloads, run the real baseline/export/parity/quantization,
+inspect development quality, then freeze decisions and collect final quality
+and repeated device measurements. Publish the evidence-backed report and demo.
 
 ## Results and debugging status
 
 No real model inference results exist yet. GitHub authentication is resolved.
 No export or quantization failures have occurred because those stages have
-not run. Dependency locking and real runners remain unfinished; milestone M1
-is not complete yet.
+not run. The locked environment and tested foundation are now in place (M1).
+Real pipeline correctness and device measurements remain unverified.
