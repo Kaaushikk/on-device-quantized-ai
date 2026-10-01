@@ -86,7 +86,7 @@ operations, then exercises all three variants with blank-input rejection,
 Unicode, long-input truncation, dtype, and output checks. This is an application
 network-use check, not an OS firewall test.
 
-The reproduction script clones the committed local repository into an ignored
+The reproduction script clones the public GitHub repository into an ignored
 `.repro` folder, creates a fresh environment, installs the version lock, and
 reruns unit tests, offline inference, and FP32 parity. It reuses hash-verified
 downloaded artifacts through local hardlinks; it neither changes weights nor

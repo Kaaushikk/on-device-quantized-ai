@@ -6,7 +6,7 @@ $verificationRoot = Join-Path $projectRoot ('.repro\' + [guid]::NewGuid().ToStri
 $checkout = Join-Path $verificationRoot 'checkout'
 $environmentRoot = Join-Path $verificationRoot 'venv'
 New-Item -ItemType Directory -Path $verificationRoot -Force | Out-Null
-git clone --no-hardlinks $projectRoot $checkout
+git clone https://github.com/Kaaushikk/on-device-quantized-ai.git $checkout
 if ($LASTEXITCODE -ne 0) { throw 'Clean checkout failed' }
 & (Join-Path $projectRoot '.venv\Scripts\python.exe') -m venv $environmentRoot
 if ($LASTEXITCODE -ne 0) { throw 'Fresh environment creation failed' }
@@ -41,7 +41,7 @@ try {
     $record = [ordered]@{
         passed = $true
         commit = $commit
-        method = 'Clean local Git clone; newly installed locked environment; hash-verified local artifact hardlinks'
+        method = 'Clean public GitHub checkout; newly installed locked environment; hash-verified local artifact hardlinks'
         checks = @('dependency compatibility', 'unit tests', 'offline all-variant inference', 'FP32 parity')
         limitations = @('Reuses downloaded source artifacts', 'Does not repeat the full device timing protocol', 'Python socket block is not an OS firewall test')
     }

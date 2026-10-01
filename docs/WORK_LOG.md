@@ -175,6 +175,16 @@ implementation or investigation and push it with the corresponding code.
 - All ten local unit tests passed after the report changes. Added a glossary so
   technical terms and limitations are easier to read.
 
+## September 30, 2026 — fresh-checkout ownership debug
+
+- Published the complete report, charts, audited raw records, and offline evidence.
+- The first clean-checkout attempt failed before dependency installation: Git's
+  local clone checks ownership of the sandbox-owned source `.git` directory
+  separately from the trusted working folder when running as the laptop account.
+- Changed verification to clone the published public GitHub repository instead.
+  This avoids another local trust exception and also verifies the published code.
+  No inference code, model, split, or benchmark results were changed.
+
 ## Next steps
 
 Run the committed clean-checkout/fresh-environment verification, finish the
