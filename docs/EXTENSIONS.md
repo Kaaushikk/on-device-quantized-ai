@@ -12,6 +12,9 @@ Install the updated `requirements.lock.txt` into the main environment. Start:
 ```
 
 The server binds to `127.0.0.1`. Readiness is `GET /health/ready`.
+Interactive request controls are available at `/docs`. If Windows rejects
+port 8000, select another available port with `--port`; the live demo used
+58228. Stop the server with Ctrl+C in its terminal.
 Send `POST /v1/predict` with JSON:
 
 ```json

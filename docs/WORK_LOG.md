@@ -279,3 +279,20 @@ reported separately below.
   This final documentation update records that verification.
 - Available-hardware extensions are delivered. Actual phone and calibrated
   energy experiments remain hardware-dependent; no such result is claimed.
+
+## Live demo requested by the user
+
+- Ran the dynamic INT8 CLI on a positive movie review: POSITIVE, with a
+  positive-class score of 0.99987.
+- Tried the localhost API on port 8000. Windows rejected the bind with
+  WinError 10013. Selected an available port, 58228, and the service started
+  successfully without changing the model or requiring elevated access.
+- Verified readiness and sent three reviews together through HTTP: an
+  enthusiastic review returned POSITIVE, a boring/waste-of-time review returned
+  NEGATIVE, and a mixed review praising the ending returned POSITIVE. These
+  examples demonstrate execution, not a new accuracy study. Scores are model
+  outputs, not calibrated probabilities of correctness.
+- Requested the interactive API documentation in the app at
+  `http://127.0.0.1:58228/docs`. Left the service running for user interaction.
+  The raw demo response is saved locally in ignored `artifacts/live-demo.json`;
+  historical benchmark results remain unchanged. This port is session-specific.
