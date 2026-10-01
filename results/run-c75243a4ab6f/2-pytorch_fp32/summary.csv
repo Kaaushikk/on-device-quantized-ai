@@ -1,0 +1,7 @@
+variant,repetition,scope,sequence_length,samples,batch_size,p50_batch_ms,p95_batch_ms,examples_per_second
+pytorch_fp32,2,inference_only,32,200,1,56.87965,75.08199,17.063358322650036
+pytorch_fp32,2,tokenization_plus_inference,32,200,1,58.51295,78.68269,16.697230529720557
+pytorch_fp32,2,inference_only,128,200,1,162.9857,206.40184500000004,5.962346784344948
+pytorch_fp32,2,tokenization_plus_inference,128,200,1,166.8726,292.9504250000001,5.575929599606491
+pytorch_fp32,2,inference_only,256,200,1,341.0434,505.18973,2.8772975951411466
+pytorch_fp32,2,tokenization_plus_inference,256,200,1,293.85995,326.0782950000001,3.419167042834877

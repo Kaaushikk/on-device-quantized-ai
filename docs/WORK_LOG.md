@@ -151,15 +151,38 @@ implementation or investigation and push it with the corresponding code.
   PowerShell-written JSON, and a guard against changing frozen split IDs before
   overwriting local data.
 
+## September 30, 2026 — complete device study and offline verification
+
+- All nine timing processes completed: three repetitions for each variant,
+  six scenarios per process, 200 timed calls per scenario, 10,800 total records.
+  No scenario failed. The full-run auditor passed exact sample counts and
+  matching inputs/settings/data across all variants and repetitions.
+- Generated and visually inspected latency and resource/quality figures.
+  Added p50/p95 repetition ranges, explicit quality uncertainty, startup timing,
+  changed-prediction analysis, and links to raw records in the report.
+- Median warm inference p50 speedup for ONNX INT8 versus ONNX FP32 is 2.61x
+  at 32 tokens, 2.91x at 128, and 2.43x at the synthetic 256-token workload.
+- ONNX weight size decreases from 255.53 MiB to 132.43 MiB (48.2%). Sampled
+  peak process RSS falls by 33.1% versus ONNX FP32 but remains above PyTorch's.
+- Recorded a runtime regression: ONNX FP32 has worse median p95 than PyTorch
+  at 128 tokens in this run, despite improved median latency. Tail variation
+  limits conclusions; the report does not hide this outcome.
+- Explained why separately timed tokenization-inclusive runs can appear faster
+  due to variation. Subtracting their summaries cannot isolate tokenizer cost.
+- All three runners passed Python-network-blocked inference with blank rejection,
+  Unicode batches, truncation, int64 tensors, finite logits, and a positive fixture.
+  This is not an OS firewall test; the exact method is saved in `results/offline.json`.
+- All ten local unit tests passed after the report changes. Added a glossary so
+  technical terms and limitations are easier to read.
+
 ## Next steps
 
-Finish repeated timing, validate record counts and matching inputs/artifacts,
-generate and inspect the report, verify the offline demo and clean-environment
-setup, and publish the final evidence.
+Run the committed clean-checkout/fresh-environment verification, finish the
+README and work-log status, check CI for the final pushed commit, and open the
+completed report for review.
 
 ## Results and debugging status
 
-M1–M4 are validated locally: locked foundation, PyTorch baseline, FP32 parity,
-and executable INT8 with development quality comparison. Final quality is
-recorded. Repeated timing and fresh-environment reproduction are in progress;
-the final report has not been generated yet.
+M1–M6 are validated locally, including the raw native timing study and report.
+The offline CLI works. Fresh-environment verification is pending. No numerical
+equivalence claim, mobile/accelerator claim, or energy claim is made.

@@ -1,0 +1,64 @@
+{
+  "passed": true,
+  "method": "Python audit hook rejects socket connect, DNS lookup, and sendto; HF offline flags enabled",
+  "limitation": "This verifies Python socket use; it is not an OS firewall isolation test",
+  "checks": [
+    {
+      "variant": "pytorch_fp32",
+      "prediction": {
+        "labels": [
+          1,
+          0
+        ],
+        "model_revision": "714eb0fa89d2f80546fda750413ed43d93601a13",
+        "checks": [
+          "blank rejection",
+          "Unicode batch",
+          "truncation",
+          "int64 tensors",
+          "finite logits",
+          "positive fixture"
+        ]
+      },
+      "passed": true
+    },
+    {
+      "variant": "onnx_fp32",
+      "prediction": {
+        "labels": [
+          1,
+          0
+        ],
+        "model_revision": "714eb0fa89d2f80546fda750413ed43d93601a13",
+        "checks": [
+          "blank rejection",
+          "Unicode batch",
+          "truncation",
+          "int64 tensors",
+          "finite logits",
+          "positive fixture"
+        ]
+      },
+      "passed": true
+    },
+    {
+      "variant": "onnx_int8",
+      "prediction": {
+        "labels": [
+          1,
+          0
+        ],
+        "model_revision": "714eb0fa89d2f80546fda750413ed43d93601a13",
+        "checks": [
+          "blank rejection",
+          "Unicode batch",
+          "truncation",
+          "int64 tensors",
+          "finite logits",
+          "positive fixture"
+        ]
+      },
+      "passed": true
+    }
+  ]
+}

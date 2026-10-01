@@ -1,0 +1,7 @@
+variant,repetition,scope,sequence_length,samples,batch_size,p50_batch_ms,p95_batch_ms,examples_per_second
+onnx_fp32,2,inference_only,32,200,1,42.32445,54.3101,23.091032052753956
+onnx_fp32,2,tokenization_plus_inference,32,200,1,41.72105,70.32018500000004,21.771315775485615
+onnx_fp32,2,inference_only,128,200,1,147.73465,255.18822,6.40815116828606
+onnx_fp32,2,tokenization_plus_inference,128,200,1,136.92425,170.867375,7.317145378463906
+onnx_fp32,2,inference_only,256,200,1,293.37755,340.503395,3.4366754529570467
+onnx_fp32,2,tokenization_plus_inference,256,200,1,286.50905,337.5981550000001,3.5223855358859697

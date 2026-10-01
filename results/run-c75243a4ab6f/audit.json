@@ -1,0 +1,57 @@
+{
+  "passed": true,
+  "processes": [
+    {
+      "variant": "pytorch_fp32",
+      "repetition": 0,
+      "records": 1200
+    },
+    {
+      "variant": "onnx_fp32",
+      "repetition": 0,
+      "records": 1200
+    },
+    {
+      "variant": "onnx_int8",
+      "repetition": 0,
+      "records": 1200
+    },
+    {
+      "variant": "pytorch_fp32",
+      "repetition": 1,
+      "records": 1200
+    },
+    {
+      "variant": "onnx_fp32",
+      "repetition": 1,
+      "records": 1200
+    },
+    {
+      "variant": "onnx_int8",
+      "repetition": 1,
+      "records": 1200
+    },
+    {
+      "variant": "pytorch_fp32",
+      "repetition": 2,
+      "records": 1200
+    },
+    {
+      "variant": "onnx_fp32",
+      "repetition": 2,
+      "records": 1200
+    },
+    {
+      "variant": "onnx_int8",
+      "repetition": 2,
+      "records": 1200
+    }
+  ],
+  "total_records": 10800,
+  "checks": [
+    "positive durations",
+    "exact scenario/iteration counts",
+    "matching inputs",
+    "matching settings and data"
+  ]
+}

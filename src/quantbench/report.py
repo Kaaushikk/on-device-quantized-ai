@@ -39,9 +39,10 @@ def generate():
     table = []
     for (variant, scope, batch, length), rows in groups.items():
         p50s = [float(row["p50_batch_ms"]) for row in rows]
+        p95s = [float(row["p95_batch_ms"]) for row in rows]
         table.append({"variant": variant, "scope": scope, "batch": batch, "sequence": length,
                       "median_p50_ms": statistics.median(p50s), "min_p50_ms": min(p50s), "max_p50_ms": max(p50s),
-                      "median_p95_ms": statistics.median(float(row["p95_batch_ms"]) for row in rows),
+                      "median_p95_ms": statistics.median(p95s), "min_p95_ms": min(p95s), "max_p95_ms": max(p95s),
                       "median_examples_per_second": statistics.median(float(row["examples_per_second"]) for row in rows)})
     destination = ROOT / "reports"
     write_json(destination / "comparison.json", {"source_run": run.name, "scenarios": table, "quality_comparison": comparison})
@@ -74,7 +75,7 @@ def generate():
                   "This gate is a project criterion; a point estimate alone does not establish equivalence.", "",
                   "## Repeated device measurements", "",
                   "Values are medians of three per-process summaries, not pooled request percentiles.", "",
-                  "| Variant | Scope | Batch | Padded length | p50 ms (min–max) | p95 ms | Examples/s |",
+                  "| Variant | Scope | Batch | Padded length | p50 ms (min–max) | p95 ms (min–max) | Examples/s |",
                   "| --- | --- | ---: | ---: | ---: | ---: | ---: |"])
     baseline_quality = quality["onnx_fp32"]
     int8_quality = quality["onnx_int8"]
@@ -101,27 +102,36 @@ def generate():
     heading_index = lines.index("## Repeated device measurements")
     lines[heading_index:heading_index] = startup_lines
     for row in table:
-        lines.append(f"| {row['variant']} | {row['scope']} | {row['batch']} | {row['sequence']} | {row['median_p50_ms']:.3f} ({row['min_p50_ms']:.3f}–{row['max_p50_ms']:.3f}) | {row['median_p95_ms']:.3f} | {row['median_examples_per_second']:.2f} |")
+        lines.append(f"| {row['variant']} | {row['scope']} | {row['batch']} | {row['sequence']} | {row['median_p50_ms']:.3f} ({row['min_p50_ms']:.3f}–{row['max_p50_ms']:.3f}) | {row['median_p95_ms']:.3f} ({row['min_p95_ms']:.3f}–{row['max_p95_ms']:.3f}) | {row['median_examples_per_second']:.2f} |")
     lines.extend(["", "## Quantization effects", ""])
     for length in protocol["sequence_lengths"]:
         fp = next(row for row in table if row['variant'] == 'onnx_fp32' and row['scope'] == 'inference_only' and row['sequence'] == length and row['batch'] == 1)
         integer = next(row for row in table if row['variant'] == 'onnx_int8' and row['scope'] == 'inference_only' and row['sequence'] == length and row['batch'] == 1)
         lines.append(f"- Length {length}, batch 1: ONNX FP32 / INT8 p50 = {fp['median_p50_ms']/integer['median_p50_ms']:.2f}×.")
     reduction = 1 - manifests['onnx_int8'][0]['model_weight_bytes'] / manifests['onnx_fp32'][0]['model_weight_bytes']
-    lines.extend(["", f"ONNX weight-file size reduction: {reduction:.1%}.", "", "## Limitations and evidence", "",
+    rss_reduction = 1 - statistics.median(m['sampled_peak_rss_bytes'] for m in manifests['onnx_int8']) / statistics.median(m['sampled_peak_rss_bytes'] for m in manifests['onnx_fp32'])
+    lines.extend(["", f"ONNX weight-file size reduction: {reduction:.1%}. Sampled peak process RSS reduction relative to ONNX FP32: {rss_reduction:.1%}. INT8 process RSS remains higher than PyTorch FP32 in this study; smaller weight files do not guarantee the lowest process memory.", "",
+                  "ONNX FP32 improves median inference latency relative to PyTorch, but its 128-token median p95 is worse in this run. Runtime conversion is not a uniform improvement across metrics.", "",
+                  "## Limitations and evidence", "",
                   "No thermal or energy measurement; background activity and OS scheduling can affect timings. Power scheme is recorded, not controlled programmatically. Warmup uses a fixed 20 calls; no statistical stationarity test is applied. First inference uses the 32-token scenario. Load time includes tokenizer and model loading after hash validation; artifacts were already cached.", "",
                   "The 10 ms sampler measures whole-process RSS and can miss brief peaks. Short/medium performance inputs rotate a bounded development pool, padded to scenario lengths. The 256-token workload repeats development text and is a synthetic stress fixture, not naturally long SST-2 text. This is not a representative production traffic study. No mobile, accelerator, container, or remote API performance is claimed.", "",
+                  "The two timing scopes run sequentially. Variation can make tokenization-plus-inference appear faster than inference-only; subtracting these separate summaries does not measure tokenizer cost. p95 varies substantially in some scenarios, so tail-latency conclusions remain limited despite three repetitions.", "",
                   "Final accuracy uses a frozen validation-derived subset, not public test labels. The model and sentiment dataset have task-specific biases. INT8 leaves unsupported operators and embeddings in floating point. Input text and downloaded weights are excluded from Git.", "",
                   f"Raw timings and hardware/artifact manifests: [run directory](../results/{run.name}/). Quality records: `results/quality-final-*.json`. FP32 parity: [parity evidence](../results/parity.json). Setup and commands: [reproduction guide](../docs/REPRODUCE.md).", "",
+                  "Shaded latency ranges span the three observed repetition percentiles; they are not confidence intervals.", "",
                   "![Warm latency](latency.png)", "", "![Size, memory, and quality](resources.png)"])
     (destination / "COMPARISON.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
-    figure, axis = plt.subplots(figsize=(8, 4.5))
+    figure, axes = plt.subplots(1, 2, figsize=(11, 4.5))
     for variant in VARIANTS:
         rows = sorted([row for row in table if row['variant'] == variant and row['scope'] == 'inference_only' and row['batch'] == 1], key=lambda row: row['sequence'])
-        axis.plot([row['sequence'] for row in rows], [row['median_p50_ms'] for row in rows], marker='o', label=variant)
-    axis.set(xlabel="Padded tensor sequence length", ylabel="Median of repetition p50 batch latency (ms)", title="Native laptop CPU inference — batch size 1")
-    axis.legend()
-    axis.grid(alpha=0.2)
+        for axis, metric in zip(axes, ("p50", "p95"), strict=True):
+            line = axis.plot([row['sequence'] for row in rows], [row[f'median_{metric}_ms'] for row in rows], marker='o', label=variant)[0]
+            axis.fill_between([row['sequence'] for row in rows], [row[f'min_{metric}_ms'] for row in rows],
+                              [row[f'max_{metric}_ms'] for row in rows], color=line.get_color(), alpha=0.12)
+            axis.set(xlabel="Padded sequence length", ylabel="Batch latency (ms)", title=f"Warm {metric} — batch 1, one CPU thread")
+            axis.set_xticks(protocol["sequence_lengths"])
+            axis.grid(alpha=0.2)
+    axes[0].legend(fontsize=8)
     figure.tight_layout()
     figure.savefig(destination / "latency.png", dpi=160)
     plt.close(figure)
@@ -131,7 +141,8 @@ def generate():
     axes[0].set(title="Model weight files", ylabel="MiB")
     axes[1].bar(names, [statistics.median(m['sampled_peak_rss_bytes'] for m in manifests[v])/2**20 for v in VARIANTS])
     axes[1].set(title="Sampled peak process RSS", ylabel="MiB")
-    axes[2].bar(names, [quality[v]['accuracy']*100 for v in VARIANTS])
+    bars = axes[2].bar(names, [quality[v]['accuracy']*100 for v in VARIANTS])
+    axes[2].bar_label(bars, fmt="%.2f%%", fontsize=8)
     axes[2].set(title=f"Held-out accuracy (N={comparison['n']})", ylabel="Percent", ylim=(0, 100))
     for axis in axes:
         axis.tick_params(axis='x', labelrotation=30)

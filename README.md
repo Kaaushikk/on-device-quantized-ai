@@ -6,10 +6,21 @@ memory, and accuracy on a Windows laptop. A slowdown is a valid result.
 
 ## Current status
 
-The pinned local model, FP32 export, and dynamic INT8 conversion work. Six-shape
-FP32 parity and seven unit tests pass locally. On the 200 development examples,
-both ONNX variants score 91.5% accuracy; this is preliminary quality evidence.
-Final quality and native device timing are in progress.
+The real model pipeline, held-out quality evaluation, and native laptop study
+are complete. Six-shape FP32 parity, ten unit tests, a 10,800-record timing
+audit, and blocked-network local inference checks pass. Clean-environment
+verification is the remaining packaging check.
+
+Measured on an Intel Core Ultra 9 185H laptop CPU with one thread and batch 1:
+
+- ONNX INT8 p50 inference speedup over ONNX FP32: **2.43–2.91×** across the three tested lengths.
+- ONNX weight-file size reduction: **48.2%** (255.53 MiB to 132.43 MiB).
+- Held-out accuracy, N=672: **90.92% FP32 vs 90.18% INT8**.
+- INT8 accuracy loss: **0.744 percentage points**; the paired interval does not establish equivalence within the chosen one-point margin.
+
+The 256-token scenario uses repeated-text stress fixtures. Tail latency varies,
+and RSS includes full-process overhead. Read the [comparison report](reports/COMPARISON.md)
+for all scenarios, uncertainty, regressions, and links to raw evidence.
 
 Use [the reproduction guide](docs/REPRODUCE.md) for environment installation,
 real model commands, offline inference, and measurement limitations.
@@ -40,6 +51,7 @@ It verifies plumbing; it is not a real model benchmark.
 
 Read [the work log](docs/WORK_LOG.md) for completed actions and problems,
 and [the protocol](docs/PROTOCOL.md) for measurement rules.
+The [plain-language glossary](docs/GLOSSARY.md) explains technical terms.
 
 ## Planned milestones
 
