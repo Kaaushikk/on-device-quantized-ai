@@ -6,6 +6,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 ARTIFACTS = ROOT / "artifacts"
 VARIANTS = ("pytorch_fp32", "onnx_fp32", "onnx_int8")
+SUPPORTED_VARIANTS = (*VARIANTS, "onnx_static_int8")
 
 
 def read_json(path):

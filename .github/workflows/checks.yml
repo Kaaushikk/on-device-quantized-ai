@@ -9,7 +9,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install small test dependencies
-        run: python -m pip install numpy==2.5.3 psutil==7.1.0
+        run: python -m pip install numpy==2.5.3 psutil==7.1.0 fastapi==0.116.1 httpx==0.28.1 pydantic==2.11.9
       - name: Test statistics, quality, and provenance
         run: |
           $env:PYTHONPATH = 'src'

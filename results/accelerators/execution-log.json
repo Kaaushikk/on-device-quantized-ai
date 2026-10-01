@@ -1,0 +1,88 @@
+[
+  {
+    "device": "CPU",
+    "arguments": [
+      "--quality-only"
+    ],
+    "exit_code": null,
+    "error": "300-second timeout"
+  },
+  {
+    "device": "GPU",
+    "arguments": [
+      "--quality-only"
+    ],
+    "exit_code": 0,
+    "stdout": "GPU: quality accuracy=0.9092, actual devices=['GPU.0']\n",
+    "stderr": "WARNING:root:Failed to create directory for openvino_telemetry file: [WinError 5] Access is denied: 'C:\\\\Users\\\\beybl\\\\AppData\\\\Local\\\\Intel Corporation'\nWARNING:root:Failed to create directory for openvino_telemetry file: [WinError 5] Access is denied: 'C:\\\\Users\\\\beybl\\\\AppData\\\\Local\\\\Intel Corporation'\nWARNING:root:Could not create directory for storing client ID. No data will be sent.\n"
+  },
+  {
+    "device": "NPU",
+    "arguments": [
+      "--quality-only"
+    ],
+    "exit_code": 0,
+    "stdout": "NPU: quality accuracy=0.9092, actual devices=['NPU']\n",
+    "stderr": "WARNING:root:Failed to create directory for openvino_telemetry file: [WinError 5] Access is denied: 'C:\\\\Users\\\\beybl\\\\AppData\\\\Local\\\\Intel Corporation'\nWARNING:root:Failed to create directory for openvino_telemetry file: [WinError 5] Access is denied: 'C:\\\\Users\\\\beybl\\\\AppData\\\\Local\\\\Intel Corporation'\nWARNING:root:Could not create directory for storing client ID. No data will be sent.\n"
+  },
+  {
+    "device": "GPU",
+    "arguments": [
+      "--repetition",
+      "0"
+    ],
+    "exit_code": 0,
+    "stdout": "GPU repetition 0: 600 timing records\n",
+    "stderr": "WARNING:root:Failed to create directory for openvino_telemetry file: [WinError 5] Access is denied: 'C:\\\\Users\\\\beybl\\\\AppData\\\\Local\\\\Intel Corporation'\nWARNING:root:Failed to create directory for openvino_telemetry file: [WinError 5] Access is denied: 'C:\\\\Users\\\\beybl\\\\AppData\\\\Local\\\\Intel Corporation'\nWARNING:root:Could not create directory for storing client ID. No data will be sent.\n"
+  },
+  {
+    "device": "NPU",
+    "arguments": [
+      "--repetition",
+      "0"
+    ],
+    "exit_code": 0,
+    "stdout": "NPU repetition 0: 600 timing records\n",
+    "stderr": "WARNING:root:Failed to create directory for openvino_telemetry file: [WinError 5] Access is denied: 'C:\\\\Users\\\\beybl\\\\AppData\\\\Local\\\\Intel Corporation'\nWARNING:root:Failed to create directory for openvino_telemetry file: [WinError 5] Access is denied: 'C:\\\\Users\\\\beybl\\\\AppData\\\\Local\\\\Intel Corporation'\nWARNING:root:Could not create directory for storing client ID. No data will be sent.\n"
+  },
+  {
+    "device": "NPU",
+    "arguments": [
+      "--repetition",
+      "1"
+    ],
+    "exit_code": 0,
+    "stdout": "NPU repetition 1: 600 timing records\n",
+    "stderr": "WARNING:root:Failed to create directory for openvino_telemetry file: [WinError 5] Access is denied: 'C:\\\\Users\\\\beybl\\\\AppData\\\\Local\\\\Intel Corporation'\nWARNING:root:Failed to create directory for openvino_telemetry file: [WinError 5] Access is denied: 'C:\\\\Users\\\\beybl\\\\AppData\\\\Local\\\\Intel Corporation'\nWARNING:root:Could not create directory for storing client ID. No data will be sent.\n"
+  },
+  {
+    "device": "GPU",
+    "arguments": [
+      "--repetition",
+      "1"
+    ],
+    "exit_code": 0,
+    "stdout": "GPU repetition 1: 600 timing records\n",
+    "stderr": "WARNING:root:Failed to create directory for openvino_telemetry file: [WinError 5] Access is denied: 'C:\\\\Users\\\\beybl\\\\AppData\\\\Local\\\\Intel Corporation'\nWARNING:root:Failed to create directory for openvino_telemetry file: [WinError 5] Access is denied: 'C:\\\\Users\\\\beybl\\\\AppData\\\\Local\\\\Intel Corporation'\nWARNING:root:Could not create directory for storing client ID. No data will be sent.\n"
+  },
+  {
+    "device": "GPU",
+    "arguments": [
+      "--repetition",
+      "2"
+    ],
+    "exit_code": 0,
+    "stdout": "GPU repetition 2: 600 timing records\n",
+    "stderr": "WARNING:root:Failed to create directory for openvino_telemetry file: [WinError 5] Access is denied: 'C:\\\\Users\\\\beybl\\\\AppData\\\\Local\\\\Intel Corporation'\nWARNING:root:Failed to create directory for openvino_telemetry file: [WinError 5] Access is denied: 'C:\\\\Users\\\\beybl\\\\AppData\\\\Local\\\\Intel Corporation'\nWARNING:root:Could not create directory for storing client ID. No data will be sent.\n"
+  },
+  {
+    "device": "NPU",
+    "arguments": [
+      "--repetition",
+      "2"
+    ],
+    "exit_code": 0,
+    "stdout": "NPU repetition 2: 600 timing records\n",
+    "stderr": "WARNING:root:Failed to create directory for openvino_telemetry file: [WinError 5] Access is denied: 'C:\\\\Users\\\\beybl\\\\AppData\\\\Local\\\\Intel Corporation'\nWARNING:root:Failed to create directory for openvino_telemetry file: [WinError 5] Access is denied: 'C:\\\\Users\\\\beybl\\\\AppData\\\\Local\\\\Intel Corporation'\nWARNING:root:Could not create directory for storing client ID. No data will be sent.\n"
+  }
+]

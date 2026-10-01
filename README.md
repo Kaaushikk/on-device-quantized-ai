@@ -46,6 +46,12 @@ It verifies plumbing; it is not a real model benchmark.
 
 ## Where things belong
 
+Optional extensions include a local HTTP API, static INT8 calibration, and
+an explicit Intel GPU/NPU study. Static INT8 failed the quality gate; the API
+keeps dynamic INT8 as its default. See [extension instructions](docs/EXTENSIONS.md)
+and [extension results](reports/EXTENSIONS.md). Energy and phone measurements
+require hardware that is not available in this run.
+
 | Folder | Purpose |
 | --- | --- |
 | `src/quantbench/runners` | Shared interface and inference implementations |

@@ -1,10 +1,10 @@
 import numpy as np
-from quantbench.common import ARTIFACTS, read_json, verify_files
+from quantbench.common import ARTIFACTS, SUPPORTED_VARIANTS, read_json, verify_files
 
 
 class LocalRunner:
     def __init__(self, variant, threads=1):
-        if variant not in ("pytorch_fp32", "onnx_fp32", "onnx_int8"):
+        if variant not in SUPPORTED_VARIANTS:
             raise ValueError("Unsupported variant")
         self.variant = variant
         self.threads = threads

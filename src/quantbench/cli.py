@@ -3,18 +3,27 @@ import os
 
 
 def main():
+    from quantbench.common import SUPPORTED_VARIANTS
     parser = argparse.ArgumentParser(description="Local CPU inference experiments")
-    parser.add_argument("command", choices=["setup", "export", "parity", "quantize", "evaluate", "compare", "benchmark", "worker", "demo", "report"])
-    parser.add_argument("--variant", choices=["pytorch_fp32", "onnx_fp32", "onnx_int8"], default="onnx_int8")
+    parser.add_argument("command", choices=["setup", "export", "parity", "quantize", "static", "evaluate", "compare", "benchmark", "worker", "demo", "report", "serve"])
+    parser.add_argument("--variant", choices=SUPPORTED_VARIANTS, default="onnx_int8")
     parser.add_argument("--subset", choices=["development", "final"], default="development")
     parser.add_argument("--repetition", type=int, default=0)
     parser.add_argument("--destination")
     parser.add_argument("--text", default="I really enjoyed this film.")
+    parser.add_argument("--port", type=int, default=8000)
     args = parser.parse_args()
     if args.command != "setup":
         os.environ["HF_HUB_OFFLINE"] = "1"
         os.environ["TRANSFORMERS_OFFLINE"] = "1"
-    if args.command in ("setup", "export", "parity", "quantize"):
+    if args.command == "serve":
+        import uvicorn
+        from quantbench.api import create_app
+        uvicorn.run(create_app(args.variant), host="127.0.0.1", port=args.port, access_log=False)
+    elif args.command == "static":
+        from quantbench.extensions import quantize_static_model
+        quantize_static_model()
+    elif args.command in ("setup", "export", "parity", "quantize"):
         from quantbench import pipeline
         getattr(pipeline, args.command)()
     else:
@@ -25,7 +34,7 @@ def main():
         elif args.command == "evaluate":
             experiment.evaluate(args.variant, args.subset)
         elif args.command == "compare":
-            experiment.paired_quality(args.subset)
+            experiment.paired_quality(args.subset, args.variant)
         elif args.command == "benchmark":
             experiment.benchmark()
         elif args.command == "worker":

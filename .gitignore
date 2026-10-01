@@ -1,4 +1,5 @@
 .venv/
+.accelerator-venv/
 .repro/
 __pycache__/
 *.py[cod]

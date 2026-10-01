@@ -1,0 +1,37 @@
+{
+  "device": "GPU",
+  "full_device_name": "Intel(R) Arc(TM) Graphics (iGPU)",
+  "openvino": "2025.3.0-19807-44526285f24-releases/2025/3",
+  "numpy": "2.2.6",
+  "model_sha256": "5474ba29e68591f6d04f1c68c501873497d171bc584cc88e4bd2d7ca7ad91752",
+  "repetition": 2,
+  "fallback_policy": "explicit single device; AUTO and HETERO forbidden",
+  "requested_precision": "f16",
+  "quality_input_sha256": "e3e9c5a35eb31e5504c030d4667887716e0ac6291f0fbd903b869fa365613d74",
+  "compiles": [
+    {
+      "length": 32,
+      "compile_ns": 6816348800,
+      "execution_devices": [
+        "GPU.0"
+      ]
+    },
+    {
+      "length": 128,
+      "compile_ns": 5691613800,
+      "execution_devices": [
+        "GPU.0"
+      ]
+    },
+    {
+      "length": 256,
+      "compile_ns": 5343396500,
+      "execution_devices": [
+        "GPU.0"
+      ]
+    }
+  ],
+  "profiling_during_timing": false,
+  "performance_input_sha256": "b90dc7b1176fe56e7df7a5f4fa13fee29741cad83a51c2d8db9f31e82c929230",
+  "scope": "synchronous inference including host/device transfer; tokenizer excluded"
+}

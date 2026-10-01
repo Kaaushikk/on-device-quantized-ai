@@ -1,0 +1,27 @@
+{
+  "subset": "development",
+  "candidate": "onnx_static_int8",
+  "n": 200,
+  "accuracy_difference_int8_minus_fp32": -0.045,
+  "paired_bootstrap_95_interval": [
+    -0.08,
+    -0.01
+  ],
+  "gate": 0.01,
+  "point_estimate_gate_passed": false,
+  "changed_row_ids": [
+    851,
+    107,
+    267,
+    617,
+    399,
+    495,
+    46,
+    382,
+    805,
+    37,
+    253,
+    584,
+    186
+  ]
+}

@@ -56,21 +56,22 @@ def evaluate(variant, subset):
     print(f"{variant} {subset}: accuracy={result['accuracy']:.4f}, macro F1={result['macro_f1']:.4f}, N={len(ids)}")
 
 
-def paired_quality(subset):
+def paired_quality(subset, candidate_variant="onnx_int8"):
     baseline = read_json(ROOT / "results" / f"quality-{subset}-onnx_fp32.json")
-    candidate = read_json(ROOT / "results" / f"quality-{subset}-onnx_int8.json")
+    candidate = read_json(ROOT / "results" / f"quality-{subset}-{candidate_variant}.json")
     if baseline["row_ids"] != candidate["row_ids"] or baseline["labels"] != candidate["labels"]:
         raise ValueError("Quality inputs differ")
     labels = np.array(baseline["labels"])
     differences = (np.array(candidate["predictions"]) == labels).astype(float) - (np.array(baseline["predictions"]) == labels)
     rng = np.random.default_rng(config()["seed"])
     bootstrap = np.mean(rng.choice(differences, (10000, len(labels)), replace=True), axis=1)
-    result = {"subset": subset, "n": len(labels), "accuracy_difference_int8_minus_fp32": float(differences.mean()),
+    result = {"subset": subset, "candidate": candidate_variant, "n": len(labels), "accuracy_difference_int8_minus_fp32": float(differences.mean()),
               "paired_bootstrap_95_interval": np.quantile(bootstrap, [0.025, 0.975]).tolist(),
               "gate": config()["accuracy_loss_gate"],
               "point_estimate_gate_passed": bool(differences.mean() >= -config()["accuracy_loss_gate"]),
               "changed_row_ids": [row for row, a, b in zip(baseline["row_ids"], baseline["predictions"], candidate["predictions"], strict=True) if a != b]}
-    write_json(ROOT / "results" / f"quality-{subset}-comparison.json", result)
+    name = f"quality-{subset}-comparison.json" if candidate_variant == "onnx_int8" else f"quality-{subset}-{candidate_variant}-comparison.json"
+    write_json(ROOT / "results" / name, result)
     print(json.dumps(result))
 
 

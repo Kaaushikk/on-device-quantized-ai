@@ -1,0 +1,34 @@
+{
+  "power_meter": [
+    {
+      "Name": "Microsoft Power Meter Device",
+      "CurrentReading": 0,
+      "EnabledState": 5,
+      "BaseUnits": null,
+      "UnitModifier": null,
+      "SamplingPeriod": null
+    }
+  ],
+  "battery": [
+    {
+      "PowerOnline": true,
+      "DischargeRate": 0,
+      "ChargeRate": 0
+    }
+  ],
+  "drivers": [
+    {
+      "DeviceName": "Intel(R) AI Boost",
+      "DriverVersion": "32.0.100.4841",
+      "DriverDate": "2026-07-23T17:00:00-07:00"
+    },
+    {
+      "DeviceName": "Intel(R) Arc(TM) Graphics",
+      "DriverVersion": "32.0.101.8132",
+      "DriverDate": "2025-09-18T17:00:00-07:00"
+    }
+  ],
+  "adb_available": false,
+  "energy_status": "No usable measured power source; zero sensor readings on AC are rejected",
+  "mobile_status": "No mobile-device run performed"
+}

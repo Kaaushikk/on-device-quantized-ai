@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "records": 5400,
+  "configurations": [
+    "ORT_CPU",
+    "GPU",
+    "NPU"
+  ],
+  "checks": [
+    "record counts",
+    "iteration coverage",
+    "fixture identity",
+    "graph/input hashes",
+    "quality row identity",
+    "explicit quality devices"
+  ]
+}

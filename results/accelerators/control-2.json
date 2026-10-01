@@ -1,0 +1,37 @@
+{
+  "engine": "ONNX Runtime",
+  "version": "1.22.1",
+  "precision": "FP32",
+  "threads": 1,
+  "providers": [
+    "CPUExecutionProvider"
+  ],
+  "summaries": [
+    {
+      "length": 32,
+      "samples": 200,
+      "batch_size": 1,
+      "p50_batch_ms": 34.47845,
+      "p95_batch_ms": 43.46464,
+      "examples_per_second": 27.742428914291306
+    },
+    {
+      "length": 128,
+      "samples": 200,
+      "batch_size": 1,
+      "p50_batch_ms": 117.91535,
+      "p95_batch_ms": 131.53701500000003,
+      "examples_per_second": 8.449958712867982
+    },
+    {
+      "length": 256,
+      "samples": 200,
+      "batch_size": 1,
+      "p50_batch_ms": 219.98735,
+      "p95_batch_ms": 259.49025500000016,
+      "examples_per_second": 4.412763732878722
+    }
+  ],
+  "model_sha256": "5474ba29e68591f6d04f1c68c501873497d171bc584cc88e4bd2d7ca7ad91752",
+  "performance_input_sha256": "b90dc7b1176fe56e7df7a5f4fa13fee29741cad83a51c2d8db9f31e82c929230"
+}

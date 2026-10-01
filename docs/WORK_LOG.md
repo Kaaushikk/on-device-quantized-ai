@@ -206,14 +206,70 @@ implementation or investigation and push it with the corresponding code.
 
 ## Remaining scope
 
-The single-laptop classifier study is complete. Static quantization, mobile or
-accelerator devices, energy measurement, a serving API, and broad thread tuning
-remain optional extensions. A new performance run can use the documented
-benchmark command; no background monitoring or recurring run is configured.
+The single-laptop classifier study is complete. The user subsequently authorized
+optional extensions; the work below records them. Broad thread tuning and phone
+measurements remain outside the measured study. No recurring run is configured.
 
 ## Results and debugging status
 
 M1–M7 are delivered for the single-device study, with the clean-environment
 verification scope described above. The core report includes measured gains,
 regressions, uncertainty, and limitations. No numerical equivalence claim,
-mobile/accelerator claim, or energy claim is made.
+mobile or energy claim is made in the core report. Accelerator results are
+reported separately below.
+
+## Optional extensions: implementation and debugging
+
+- Installed pinned FastAPI/Uvicorn/HTTPX dependencies in the main environment,
+  checked dependency compatibility and regenerated the lock file.
+- Added a localhost service with one loaded model, readiness, limited requests,
+  explicit variant selection, labels, artifact metadata and a busy response.
+  Three API tests verify lifecycle, request boundaries and concurrent inference.
+  A real HTTP check passed positive/negative labels, readiness, blank rejection,
+  wrong-variant rejection and 200 measured roundtrips after 20 warmups.
+- Calibrated static signed INT8 QDQ on 100 development examples. All-MatMul
+  quantization lost 4.5 accuracy points. Excluding attention MatMuls was a single
+  bounded sensitivity check and also lost 4.5 points. Archived the first graph
+  locally and retained its development result. The second candidate lost 2.98
+  points on the untouched final set and fails the quality gate. No further
+  tuning or timing claim is made for this failed candidate.
+- Detected Intel Arc graphics and Intel AI Boost NPU, with driver metadata.
+  Created an isolated OpenVINO environment because it requires NumPy below 2.3;
+  the core environment stays on its locked version. Saved a separate lock file.
+- Prepared hash-verified fixed input tensors, preserving all 672 final examples
+  and the original timing fixture identities. Explicit GPU/NPU selection
+  forbids AUTO/HETERO fallback. Each device matched 90.92% final accuracy.
+- Debugged OpenVINO profiling: the property key is PERF_COUNT, not
+  ENABLE_PROFILING. Also normalized EXECUTION_DEVICES because the NPU returns
+  a string whereas the GPU returns a sequence. The first check accidentally
+  split the NPU string into letters and correctly rejected it; normalization
+  fixed the check. Profiling is disabled during timed calls.
+- The OpenVINO CPU process exceeded the 300-second limit. Inspection afterward
+  found a saved 90.92% quality result, zero changed labels, and 0.83-second
+  compilation. Thus compilation succeeded; the timeout applies to overall
+  process completion, with its exact cause unresolved. Recorded the timeout
+  and used an explicit ONNX Runtime FP32 CPU control for timings instead.
+- OpenVINO telemetry could not create its state directory under the sandbox
+  and reported that no data would be sent. Worker Python socket operations are
+  blocked; this is an application-level guard, not a system firewall guarantee.
+- Checked power-meter and battery interfaces: zero readings on AC lack usable
+  measurement metadata. Added a tested importer for external measured watts;
+  no energy numbers are fabricated. No mobile-device measurement is available.
+
+## Extension results and final checks
+
+- Completed three fresh-process timing repetitions each for GPU, NPU and the
+  ONNX Runtime FP32 CPU control. Audited all 5,400 records for counts, iteration
+  coverage, fixture identities, graph/input hashes and explicit device use.
+- GPU and NPU each changed zero predicted labels versus the same-tensor FP32
+  reference. Their logits differ slightly; this is prediction agreement, not
+  numerical equivalence. NPU p50 speedups were 11.02x, 16.42x and 16.44x at
+  lengths 32, 128 and 256. Runtime, precision and device change together;
+  CPU controls ran afterward and thermal/scheduling effects remain limitations.
+- Generated the separate extension report and commands. Kept the core report
+  and original measurement files intact. Downloaded graphs, input tensors and
+  environments remain ignored; code, manifests and raw measured results are
+  versioned.
+- All 15 unit tests passed, including API concurrency and power integration.
+  The synthetic output check passed, dependency checking found no conflicts,
+  and the live model HTTP check passed. GitHub CI will verify the pushed source.
