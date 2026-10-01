@@ -272,4 +272,10 @@ reported separately below.
   versioned.
 - All 15 unit tests passed, including API concurrency and power integration.
   The synthetic output check passed, dependency checking found no conflicts,
-  and the live model HTTP check passed. GitHub CI will verify the pushed source.
+  and the live model HTTP check passed.
+- Pushed implementation and measured results as `fc85e9b`. GitHub correctness
+  checks passed in run `36805168148` (15 tests and synthetic pipeline). Verified
+  the working tree was clean and GitHub lists Kaaushikk as the sole contributor.
+  This final documentation update records that verification.
+- Available-hardware extensions are delivered. Actual phone and calibrated
+  energy experiments remain hardware-dependent; no such result is claimed.
