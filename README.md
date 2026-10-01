@@ -8,8 +8,10 @@ memory, and accuracy on a Windows laptop. A slowdown is a valid result.
 
 The real model pipeline, held-out quality evaluation, and native laptop study
 are complete. Six-shape FP32 parity, ten unit tests, a 10,800-record timing
-audit, and blocked-network local inference checks pass. Clean-environment
-verification is the remaining packaging check.
+audit, and blocked-network local inference checks pass. A clean GitHub checkout
+with freshly installed locked dependencies also passes the tests, offline
+inference checks, and FP32 parity. It reuses verified local artifacts; the full
+timing study and fresh downloads were not repeated in that verification.
 
 Measured on an Intel Core Ultra 9 185H laptop CPU with one thread and batch 1:
 
@@ -24,6 +26,12 @@ for all scenarios, uncertainty, regressions, and links to raw evidence.
 
 Use [the reproduction guide](docs/REPRODUCE.md) for environment installation,
 real model commands, offline inference, and measurement limitations.
+
+Try the local demo from this folder in PowerShell:
+
+```powershell
+.\scripts\run.ps1 demo --text 'I really enjoyed this movie.'
+```
 
 After installing the locked dependencies with Python 3.12, run the checks:
 

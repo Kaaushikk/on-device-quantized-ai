@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "commit": "43274dd41c892bebd3e53b0a4ec29596b9740305",
+  "method": "Clean public GitHub checkout; newly installed locked environment; hash-verified local artifact hardlinks",
+  "checks": [
+    "dependency compatibility",
+    "unit tests",
+    "offline all-variant inference",
+    "FP32 parity"
+  ],
+  "limitations": [
+    "Reuses downloaded source artifacts",
+    "Does not repeat the full device timing protocol",
+    "Python socket block is not an OS firewall test"
+  ]
+}

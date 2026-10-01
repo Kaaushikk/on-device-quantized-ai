@@ -185,14 +185,35 @@ implementation or investigation and push it with the corresponding code.
   This avoids another local trust exception and also verifies the published code.
   No inference code, model, split, or benchmark results were changed.
 
-## Next steps
+## September 30, 2026 — final verification and delivery
 
-Run the committed clean-checkout/fresh-environment verification, finish the
-README and work-log status, check CI for the final pushed commit, and open the
-completed report for review.
+- Fresh locked dependency installation succeeded in a clean public GitHub clone
+  of commit `43274dd41c892bebd3e53b0a4ec29596b9740305`. `pip check` passed.
+- All ten tests, all three Python-network-blocked runner/input-policy checks,
+  and all six FP32 parity shapes passed in that new environment. Saved the exact
+  verification scope and commit in `results/reproduction.json`. It reused local
+  hash-verified artifact hardlinks and did not repeat the full timing study or
+  downloads; those limitations are explicit in the evidence and guide.
+- Ran the actual PowerShell CLI demo with an INT8 positive-sentiment fixture;
+  it returned a positive label, scores, variant, and the pinned model revision.
+- Confirmed PyTorch and ONNX FP32 predicted labels match on all 672 held-out rows.
+- Moved failed symbolic-inference diagnostic model/data files into ignored
+  `artifacts/debug` so generated weights do not clutter the repository root.
+- Verified GitHub's contributor listing contains only Kaaushikk. Commits use the
+  configured user identity and contain no assistant co-author trailer.
+- CI passed for the report and reproduction-fix commits. The final documentation
+  and verification record will be pushed and its CI checked before handoff.
+
+## Remaining scope
+
+The single-laptop classifier study is complete. Static quantization, mobile or
+accelerator devices, energy measurement, a serving API, and broad thread tuning
+remain optional extensions. A new performance run can use the documented
+benchmark command; no background monitoring or recurring run is configured.
 
 ## Results and debugging status
 
-M1–M6 are validated locally, including the raw native timing study and report.
-The offline CLI works. Fresh-environment verification is pending. No numerical
-equivalence claim, mobile/accelerator claim, or energy claim is made.
+M1–M7 are delivered for the single-device study, with the clean-environment
+verification scope described above. The core report includes measured gains,
+regressions, uncertainty, and limitations. No numerical equivalence claim,
+mobile/accelerator claim, or energy claim is made.
